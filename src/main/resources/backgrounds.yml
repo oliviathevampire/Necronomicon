@@ -1,0 +1,13 @@
+backgrounds:
+  "1":
+    value: "YOUR TEXTURE CHARACTERS"
+    length: 10 # Length of the texture (width in pixels)
+    item:
+      material: DIAMOND
+      display-name: "<blue>Background 1"
+  "2":
+    value: "YOUR TEXTURE CHARACTERS"
+    length: 10 # Length of the texture (width in pixels)
+    item:
+      material: DIAMOND
+      display-name: "<blue>Background 2"

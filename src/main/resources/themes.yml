@@ -1,0 +1,13 @@
+themes:
+  "1":
+    value: "YOUR TEXTURE CHARACTERS"
+    length: 10 # Length of the texture (width in pixels)
+    item:
+      material: DIAMOND
+      display-name: "<blue>Theme 1"
+  "2":
+    value: "YOUR TEXTURE CHARACTERS"
+    length: 10 # Length of the texture (width in pixels)
+    item:
+      material: DIAMOND
+      display-name: "<blue>Theme 2"

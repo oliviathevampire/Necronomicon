@@ -1,0 +1,11 @@
+name: NecroNomicon
+version: '${project.version}'
+main: xyz.larkyy.necronomicon.NecroNomicon
+api-version: '1.20'
+libraries:
+  - "org.jetbrains.kotlin:kotlin-stdlib:1.9.21"
+commands:
+  profile:
+    aliases: []
+  necronomicon:
+    aliases: []
