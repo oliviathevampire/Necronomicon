@@ -7,7 +7,7 @@ import xyz.larkyy.necronomicon.profile.PlayerProfile
 
 abstract class MenuItem(
     val itemStack: ItemStack,
-    val slots: ArrayList<Int>
+    val slots: MutableList<Int>
 ) {
     abstract fun onClick(event: InventoryClickEvent)
 

@@ -8,8 +8,8 @@ data class OwnInventorySettings(
     val statusButton: StatusButton,
     val themeSlot: Int,
     val backgroundSlot: Int,
-    val badgeSlots: ArrayList<Int>,
-    val customButtons: ArrayList<MenuItem>
+    val badgeSlots: MutableList<Int>,
+    val customButtons: MutableList<MenuItem>
 ) {
 
 
