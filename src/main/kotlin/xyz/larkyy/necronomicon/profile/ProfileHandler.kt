@@ -2,17 +2,19 @@ package xyz.larkyy.necronomicon.profile
 
 import org.bukkit.entity.Player
 import xyz.larkyy.necronomicon.NecroNomicon
-import java.util.UUID
+import xyz.larkyy.necronomicon.util.sendConsoleMessage
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
-class ProfileHandler(plugin: NecroNomicon) {
+class ProfileHandler(val plugin: NecroNomicon) {
 
     private val database = DatabaseHandler(plugin)
 
     fun createProfile(player: Player): CompletableFuture<PlayerProfile> {
-        val profile = PlayerProfile(player.uniqueId,player.name,HashSet(),null,null,null,0)
+        val profile = PlayerProfile(player.uniqueId,player.name, ArrayList(),null,null,null,0)
 
         return saveProfile(profile).thenApply {
+            plugin.sendConsoleMessage("New profile saved")
             return@thenApply profile
         }
     }

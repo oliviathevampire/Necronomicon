@@ -1,15 +1,14 @@
 package xyz.larkyy.necronomicon.profile
 
 import com.google.gson.Gson
-import org.bukkit.entity.Player
 import xyz.larkyy.necronomicon.NecroNomicon
+import xyz.larkyy.necronomicon.util.sendConsoleMessage
 import java.io.File
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import kotlin.collections.HashSet
 
 class DatabaseHandler(private val plugin: NecroNomicon) {
 
@@ -43,6 +42,7 @@ class DatabaseHandler(private val plugin: NecroNomicon) {
 
     fun loadProfile(uuid: UUID): CompletableFuture<PlayerProfile?> {
         return CompletableFuture.supplyAsync {
+            plugin.sendConsoleMessage("LOADING PROFILE")
             val connection = getConnection()
             try {
                 connection!!.prepareStatement(
@@ -50,7 +50,7 @@ class DatabaseHandler(private val plugin: NecroNomicon) {
             SELECT Username, Badges, Status, Theme, Background, Reputation
             FROM playerprofiles_profile
             WHERE UniqueID = ?;
-            """.trimIndent()
+            """
                 ).use { ps ->
                     ps.setString(1, uuid.toString())
 
@@ -64,17 +64,23 @@ class DatabaseHandler(private val plugin: NecroNomicon) {
                         val background = rs.getString("Background")
                         val repuration = rs.getInt("Reputation")
 
-                        val badges = Gson().fromJson<Set<String>>(badgesJson, HashSet<String>().javaClass)
+                        val badges = Gson().fromJson(badgesJson, ArrayList<String>().javaClass)
 
+                        plugin.sendConsoleMessage("RETURNING PROFILE")
                         return@supplyAsync PlayerProfile(uuid, userName, badges, status, theme, background, repuration)
                     } else {
+                        plugin.sendConsoleMessage("LOADING NULL")
                         return@supplyAsync null
                     }
 
                 }
             } catch (e: SQLException) {
+                e.printStackTrace()
                 throw java.lang.RuntimeException(e)
             }
+        }.exceptionally {ex ->
+            ex.printStackTrace()
+            null
         }
     }
 
@@ -102,7 +108,7 @@ class DatabaseHandler(private val plugin: NecroNomicon) {
                         val background = rs.getString("Background")
                         val repuration = rs.getInt("Reputation")
 
-                        val badges = Gson().fromJson<Set<String>>(badgesJson, HashSet<String>().javaClass)
+                        val badges = Gson().fromJson(badgesJson, ArrayList<String>().javaClass)
 
                         return@supplyAsync PlayerProfile(uuid, userName, badges, status, theme, background, repuration)
                     } else {
@@ -117,6 +123,7 @@ class DatabaseHandler(private val plugin: NecroNomicon) {
     }
 
     fun saveProfile(playerProfile: PlayerProfile): CompletableFuture<Void> {
+        plugin.sendConsoleMessage("Saving new profile")
         return CompletableFuture.supplyAsync {
             getConnection().use { connection ->
                 connection?.prepareStatement("" +
@@ -129,6 +136,8 @@ class DatabaseHandler(private val plugin: NecroNomicon) {
                         ps.setString(5,playerProfile.theme)
                         ps.setString(6,playerProfile.background)
                         ps.setInt(7,playerProfile.reputation)
+
+                        ps.execute()
 
                         return@supplyAsync null
                     }

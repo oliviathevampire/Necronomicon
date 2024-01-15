@@ -1,6 +1,6 @@
 others-profile:
   title: "Profile of %player%"
-  size: 36
+  size: 56
   reputation-button:
     material: EMERALD
     display-name: "<green>Reputation: %reputation%"
@@ -29,6 +29,6 @@ others-profile:
       lore:
         - "<white>Your Status: %status%"
       slots:
-        - 3
-        - 4
-        - 5
+        - 41
+        - 42
+        - 43

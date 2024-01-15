@@ -1,7 +1,10 @@
 badges:
-  "1":
+  "genderfluid":
     material: DIAMOND
-    display-name: "<blue>Badge 1"
-  "2":
+    display-name: "Genderfluid Badge"
+  "trans":
     material: DIAMOND
-    display-name: "<blue>Badge 2"
+    display-name: "Trans Badge"
+  "bat":
+    material: DIAMOND
+    display-name: "Bat Badge"

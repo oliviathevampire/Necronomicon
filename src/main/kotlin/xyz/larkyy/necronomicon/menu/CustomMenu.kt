@@ -14,7 +14,7 @@ abstract class CustomMenu(val viewingPlayer: Player, val playerProfile: PlayerPr
     private val menuItems: HashMap<Int,MenuItem> = HashMap()
 
     init {
-        inventory = Bukkit.createInventory(this,size,MiniMessage.miniMessage().deserialize(title))
+        inventory = Bukkit.createInventory(this,size,MiniMessage.miniMessage().deserialize(title.replace("%player%",playerProfile.userName)))
     }
 
     override fun getInventory(): Inventory {
@@ -22,18 +22,25 @@ abstract class CustomMenu(val viewingPlayer: Player, val playerProfile: PlayerPr
     }
 
     fun onClick(event: InventoryClickEvent) {
-        menuItems[event.slot]?.onClick(event)
+        val menuitem = menuItems[event.slot]
+        if (menuitem == null) {
+            event.isCancelled = true
+            return
+        }
+        menuitem.onClick(event)
     }
 
     fun addMenuItem(menuItem: MenuItem, setItem: Boolean = true) {
-        val iS = menuItem.getFormattedItem(playerProfile)
+        val iS = menuItem.getFormattedItem(playerProfile, viewingPlayer)
         for (slot in menuItem.slots) {
             menuItems[slot] = menuItem
-            if (setItem) inventory.setItem(slot,iS)
+            if (setItem) {
+                inventory.setItem(slot,iS)
+            }
         }
     }
 
-    fun addMenuItems(menuItems: ArrayList<MenuItem>) {
+    fun addMenuItems(menuItems: MutableList<MenuItem>) {
         for (menuItem in menuItems) {
             addMenuItem(menuItem)
         }

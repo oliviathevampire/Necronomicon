@@ -1,34 +1,61 @@
 own-profile:
   title: "Your Profile"
-  size: 36
+  size: 56
   status-button:
     material: NAME_TAG
-    display-name: "Your status"
+    display-name: "<gold>Status <glyph:status>"
     lore:
-      - "<white>Your Status: %status%"
+      - ""
+      - "<orange>Keep people updated on"
+      - "<orange>your adventures with the"
+      - "<orange>from the <yellow>Player Status <white><glyph:status><orange>."
+      - ""
+      - "<yellow>✘ Click to edit your status"
     slots:
-      - 3
-      - 4
-      - 5
+      - 14
+      - 15
+      - 16
+      - 17
   theme-slot: 6
   background-slot: 7
   badge-slots:
-    - 9
-    - 10
-    - 11
-    - 12
-    - 13
-    - 14
-    - 15
-    - 16
-    - 17
+    - 45
+    - 46
+    - 47
+    - 48
+    - 49
+    - 50
+    - 51
+    - 52
+    - 53
   items:
+    "settings":
+      material: EMERALD
+      display-name: "<gold>Settings <glyph:settings>"
+      lore:
+        - ""
+        - "<orange>Update and customize game,"
+        - "<orange>social and safety settings"
+        - "<orange>from the <yellow>Settings Menu <white><glyph:settings><orange>."
+        - ""
+        - "<yellow>✘ Click to edit your settings"
+      slots:
+        - 32
+        - 33
+        - 34
+        - 35
     "reputation":
       material: EMERALD
-      display-name: "<green>Reputation: %reputation%"
+      display-name: "<gold>Fangs Collection <glyph:fang>"
       lore:
-        - "<white>%reputation%"
+        - "<gray>%reputation% Fangs"
+        - ""
+        - "<orange>Make a good impression"
+        - "<orange>on fellow guests and they"
+        - "<orange>might send you some"
+        - "<yellow>Fangs <white><glyph:fang><orange>!"
       slots:
-        - 0
-        - 1
-        - 2
+        - 41
+        - 42
+        - 43
+        - 44

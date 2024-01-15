@@ -24,7 +24,7 @@ class ConfigLoader(plugin: NecroNomicon) {
     private val backgroundsConfig: Config = Config(plugin, "backgrounds.yml")
 
     private val ownProfileConfig: Config = Config(plugin, "own-profile-menu.yml")
-    private val othersProfileConfig: Config = Config(plugin, "own-profile-menu.yml")
+    private val othersProfileConfig: Config = Config(plugin, "others-profile-menu.yml")
 
     init {
         badgesConfig.load()
@@ -83,6 +83,7 @@ class ConfigLoader(plugin: NecroNomicon) {
                 commands.forEach { cmd ->
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd)
                 }
+                it.isCancelled = true
             }
         }?.toMutableList() ?: ArrayList()
     }
@@ -109,7 +110,7 @@ class ConfigLoader(plugin: NecroNomicon) {
 
     fun loadBackgrounds(): MutableMap<String, Background> {
         return bgCfg().getConfigurationSection("backgrounds")?.getKeys(false)?.associate { id ->
-            val path = "themes.$id"
+            val path = "backgrounds.$id"
             val itemStack = loadItemStack(bgCfg(), "$path.item")
             val value = bgCfg().getString("$path.value", "")!!
             val length = bgCfg().getInt("$path.length")
@@ -124,6 +125,7 @@ class ConfigLoader(plugin: NecroNomicon) {
 
         val itemStack = ItemStack(material)
         val im = itemStack.itemMeta ?: return itemStack
+        im.displayName(MiniMessage.miniMessage().deserialize(displayname))
 
         if (cfg.contains("$path.lore")) {
             val lore = loadComponentList(cfg, "$path.lore")

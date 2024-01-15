@@ -8,11 +8,13 @@ import xyz.larkyy.necronomicon.NecroNomicon
 class BackgroundHandler(plugin: NecroNomicon) {
 
     private val namespacedKey: NamespacedKey
-    val backgrounds : MutableMap<String, Background>
+    val backgrounds : MutableMap<String, Background> = HashMap()
 
     init {
         this.namespacedKey = NamespacedKey(plugin, "background-id")
-        this.backgrounds = plugin.configLoader.loadBackgrounds()
+        for (value in plugin.configLoader.loadBackgrounds().values) {
+            createBackground(value.id,value.itemStack,value.value,value.length)
+        }
     }
 
     fun isBackground(item: ItemStack): Boolean {

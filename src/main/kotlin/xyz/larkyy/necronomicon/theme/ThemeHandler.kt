@@ -8,11 +8,13 @@ import xyz.larkyy.necronomicon.NecroNomicon
 class ThemeHandler(plugin: NecroNomicon) {
 
     private val namespacedKey: NamespacedKey
-    val themes: MutableMap<String, Theme>
+    val themes: MutableMap<String, Theme> = HashMap()
 
     init {
         this.namespacedKey = NamespacedKey(plugin, "theme-id")
-        this.themes = plugin.configLoader.loadThemes()
+        for (value in plugin.configLoader.loadThemes().values) {
+            createTheme(value.id, value.itemStack, value.value, value.length)
+        }
     }
 
     fun isTheme(item: ItemStack): Boolean {
@@ -30,6 +32,7 @@ class ThemeHandler(plugin: NecroNomicon) {
     fun getTheme(id: String): Theme? {
         return themes[id]
     }
+
     fun getTheme(item: ItemStack): Theme? {
         val im = item.itemMeta ?: return null
         val pdc = im.persistentDataContainer

@@ -8,11 +8,13 @@ import xyz.larkyy.necronomicon.NecroNomicon
 class BadgeHandler(plugin: NecroNomicon) {
 
     private val namespacedKey: NamespacedKey
-    val badges: MutableMap<String, Badge>
+    val badges: MutableMap<String, Badge> = HashMap()
 
     init {
         this.namespacedKey = NamespacedKey(plugin, "badge-id")
-        this.badges = plugin.configLoader.loadBadges()
+        for (badge in plugin.configLoader.loadBadges()) {
+            createBadge(badge.key,badge.value.item)
+        }
     }
 
     fun isBadge(item: ItemStack): Boolean {

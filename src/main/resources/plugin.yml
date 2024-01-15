@@ -6,6 +6,6 @@ libraries:
   - "org.jetbrains.kotlin:kotlin-stdlib:1.9.21"
 commands:
   profile:
-    aliases: []
+    description: Profile command
   necronomicon:
-    aliases: []
+    description: Main command

@@ -10,21 +10,20 @@ import xyz.larkyy.necronomicon.profile.ProfileManager
 class ProfileCommand(private val plugin: NecroNomicon) : CommandExecutor {
     override fun onCommand(p0: CommandSender, p1: Command, p2: String, p3: Array<out String>): Boolean {
 
-        if (p0 !is Player) return false
+        if (p0 !is Player) {
+            p0.sendMessage("This command is for players only!")
+            return false
+        }
 
         if (p3.isEmpty()) {
             profileManager().getProfile(p0).thenAccept { profile ->
-                p0.sendMessage("Opening Own")
                 plugin.profileManager.openProfile(p0,profile)
             }
         } else {
-            profileManager().loadProfile(p3[1]).thenAccept { profile ->
+            profileManager().loadProfile(p3[0]).thenAccept { profile ->
                 if (profile == null) {
-                    p0.sendMessage("Unknown player")
                     return@thenAccept
                 }
-
-                p0.sendMessage("Opening Someones")
                 plugin.profileManager.openProfile(p0,profile)
             }
         }

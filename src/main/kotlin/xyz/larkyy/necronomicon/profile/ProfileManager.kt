@@ -1,11 +1,13 @@
 package xyz.larkyy.necronomicon.profile
 
 import org.bukkit.entity.Player
+import org.bukkit.scheduler.BukkitRunnable
 import xyz.larkyy.necronomicon.NecroNomicon
 import xyz.larkyy.necronomicon.menu.OthersInventorySettings
 import xyz.larkyy.necronomicon.menu.OwnInventorySettings
 import xyz.larkyy.necronomicon.menu.menus.OthersProfileMenu
 import xyz.larkyy.necronomicon.menu.menus.OwnProfileMenu
+import xyz.larkyy.necronomicon.util.sendConsoleMessage
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -25,11 +27,19 @@ class ProfileManager(val plugin: NecroNomicon) {
     }
 
     private fun openOwnProfile(player: Player, playerProfile: PlayerProfile) {
-        OwnProfileMenu(ownInventorySettings,player,playerProfile)
+        object : BukkitRunnable() {
+            override fun run() {
+                player.openInventory(OwnProfileMenu(ownInventorySettings,player,playerProfile).inventory)
+            }
+        }.runTask(plugin)
     }
 
     private fun openSomeonesProfile(player: Player, playerProfile: PlayerProfile) {
-        OthersProfileMenu(othersInventorySettings,player,playerProfile)
+        object : BukkitRunnable() {
+            override fun run() {
+                player.openInventory(OthersProfileMenu(othersInventorySettings,player,playerProfile).inventory)
+            }
+        }.runTask(plugin)
     }
 
     fun createProfile(player: Player): CompletableFuture<PlayerProfile> {
@@ -46,14 +56,22 @@ class ProfileManager(val plugin: NecroNomicon) {
 
         loadProfile(player.uniqueId).thenAccept { profile ->
             if (profile == null) {
+                plugin.sendConsoleMessage("Profile is null, creating..")
                 createProfile(player).thenAccept { newProfile ->
+                    plugin.sendConsoleMessage("Created!")
                     future.completeAsync { newProfile }
+                }.exceptionally {ex ->
+                    ex.printStackTrace()
+                    null
                 }
                 return@thenAccept
             }
             future.completeAsync {
                 profile
             }
+        }.exceptionally {ex ->
+            ex.printStackTrace()
+            null
         }
         return future
     }

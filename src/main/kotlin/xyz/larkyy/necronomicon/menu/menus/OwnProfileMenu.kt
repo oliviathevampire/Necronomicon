@@ -2,7 +2,9 @@ package xyz.larkyy.necronomicon.menu.menus
 
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import org.bukkit.scheduler.BukkitRunnable
 import xyz.larkyy.necronomicon.NecroNomicon
 import xyz.larkyy.necronomicon.background.Background
 import xyz.larkyy.necronomicon.badge.Badge
@@ -13,18 +15,31 @@ import xyz.larkyy.necronomicon.profile.PlayerProfile
 import xyz.larkyy.necronomicon.theme.Theme
 
 class OwnProfileMenu(private val ownInventorySettings: OwnInventorySettings, viewingPlayer: Player, playerProfile: PlayerProfile) :
-    CustomMenu(viewingPlayer, playerProfile, ownInventorySettings.size, ownInventorySettings.title) {
+    CustomMenu(viewingPlayer, playerProfile, ownInventorySettings.size, (playerProfile.background ?: "") +(playerProfile.theme ?: ownInventorySettings.title)) {
 
     init {
+        loadBadges()
         addMenuItems(ownInventorySettings.customButtons)
         loadStatusButton()
-        loadBadges()
         loadTheme()
         loadBackground()
     }
 
     private fun loadStatusButton() {
-        addMenuItem(ownInventorySettings.statusButton)
+        val iS = ownInventorySettings.statusButton.itemStack.clone()
+
+        val menuItem = CustomButton(iS, ownInventorySettings.statusButton.slots) { event ->
+
+            object : BukkitRunnable() {
+                override fun run() {
+                    ownInventorySettings.statusButton.openStatusEditor(viewingPlayer,playerProfile) {
+                    }
+                }
+            }.runTask(NecroNomicon.instance!!)
+
+            event.isCancelled = true
+        }
+        addMenuItem(menuItem,true)
     }
 
     private fun loadBadges() {
@@ -44,33 +59,40 @@ class OwnProfileMenu(private val ownInventorySettings: OwnInventorySettings, vie
 
             addFilledBadge(slot,badge,true)
         }
-
-        for (slot in ownInventorySettings.badgeSlots) {
-            playerProfile.badges
-        }
     }
 
     private fun addFilledBadge(slot: Int, badge: Badge, setItem: Boolean) {
         val iS = badge.item.clone()
 
-        val menuItem = CustomButton(iS, ArrayList(slot)) { event ->
-            viewingPlayer.sendMessage("You have taken the badge!")
+        val menuItem = CustomButton(iS, mutableListOf(slot)) { event ->
+            if (event.cursor.type != Material.AIR) {
+                event.isCancelled = true
+                return@CustomButton
+            }
+            playerProfile.badges.remove(badge.id)
+            NecroNomicon.instance?.profileManager?.saveProfile(playerProfile)
             addEmptyBadge(slot, false)
         }
         addMenuItem(menuItem,setItem)
     }
 
     private fun addEmptyBadge(slot: Int, setItem: Boolean) {
-        addMenuItem(CustomButton(ItemStack(Material.AIR), ArrayList(slot)) { event ->
+        val slots = mutableListOf(slot)
+        addMenuItem(CustomButton(ItemStack(Material.AIR), slots) { event ->
             val badge = NecroNomicon.instance?.badgeHandler?.getBadge(event.cursor)
 
             if (badge == null) {
                 event.isCancelled = true
-                viewingPlayer.sendMessage("This item is not a badge!")
                 return@CustomButton
             }
+            if (event.cursor.amount > 1) {
+                event.isCancelled = true
+                event.inventory.setItem(slot,badge.item)
 
-            viewingPlayer.sendMessage("You have added a badge")
+                viewingPlayer.setItemOnCursor(event.cursor.clone().apply { amount -= 1 })
+            }
+            playerProfile.badges.add(badge.id)
+            NecroNomicon.instance?.profileManager?.saveProfile(playerProfile)
             addFilledBadge(slot, badge, false)
         },setItem)
     }
@@ -91,30 +113,41 @@ class OwnProfileMenu(private val ownInventorySettings: OwnInventorySettings, vie
     private fun addFilledTheme(theme: Theme, setItem: Boolean) {
         val iS = theme.itemStack.clone()
 
-        val menuItem = CustomButton(iS, ArrayList(ownInventorySettings.themeSlot)) { event ->
-            viewingPlayer.sendMessage("You have taken the theme!")
-            addEmptyTheme(false)
+        val menuItem = CustomButton(iS, mutableListOf(ownInventorySettings.themeSlot)) { event ->
+            if (event.cursor.type != Material.AIR) {
+                event.isCancelled = true
+                return@CustomButton
+            }
+            playerProfile.theme = null
+            NecroNomicon.instance?.profileManager?.saveProfile(playerProfile)
+            NecroNomicon.instance?.profileManager?.openProfile(viewingPlayer,playerProfile)
+            //addEmptyTheme(false)
         }
         addMenuItem(menuItem,setItem)
     }
 
     private fun addEmptyTheme(setItem: Boolean) {
-        addMenuItem(CustomButton(ItemStack(Material.AIR), ArrayList(ownInventorySettings.themeSlot)) { event ->
+        addMenuItem(CustomButton(ItemStack(Material.AIR), mutableListOf(ownInventorySettings.themeSlot)) { event ->
             val theme = NecroNomicon.instance?.themeHandler?.getTheme(event.cursor)
 
             if (theme == null) {
                 event.isCancelled = true
-                viewingPlayer.sendMessage("This item is not a theme!")
                 return@CustomButton
             }
+            if (event.cursor.amount > 1) {
+                event.isCancelled = true
+                event.inventory.setItem(ownInventorySettings.themeSlot,theme.itemStack)
 
-            viewingPlayer.sendMessage("You have added a theme")
-            addFilledTheme(theme, false)
+                viewingPlayer.setItemOnCursor(event.cursor.clone().apply { amount -= 1 })
+            }
+            playerProfile.theme = theme.id
+            NecroNomicon.instance?.profileManager?.saveProfile(playerProfile)
+            NecroNomicon.instance?.profileManager?.openProfile(viewingPlayer,playerProfile)
         },setItem)
     }
 
     private fun loadBackground() {
-        val backgroundId = playerProfile.theme
+        val backgroundId = playerProfile.background
         if (backgroundId != null) {
             val background = NecroNomicon.instance?.backgroundHandler?.getBackground(backgroundId)
 
@@ -129,25 +162,35 @@ class OwnProfileMenu(private val ownInventorySettings: OwnInventorySettings, vie
     private fun addFilledBackground(background: Background, setItem: Boolean) {
         val iS = background.itemStack.clone()
 
-        val menuItem = CustomButton(iS, ArrayList(ownInventorySettings.themeSlot)) { event ->
-            viewingPlayer.sendMessage("You have taken the background!")
-            addEmptyBackground(false)
+        val menuItem = CustomButton(iS, mutableListOf(ownInventorySettings.backgroundSlot)) { event ->
+            if (event.cursor.type != Material.AIR) {
+                event.isCancelled = true
+                return@CustomButton
+            }
+            playerProfile.background = null
+            NecroNomicon.instance?.profileManager?.saveProfile(playerProfile)
+            NecroNomicon.instance?.profileManager?.openProfile(viewingPlayer,playerProfile)
         }
         addMenuItem(menuItem,setItem)
     }
 
     private fun addEmptyBackground(setItem: Boolean) {
-        addMenuItem(CustomButton(ItemStack(Material.AIR), ArrayList(ownInventorySettings.themeSlot)) { event ->
+        addMenuItem(CustomButton(ItemStack(Material.AIR), mutableListOf(ownInventorySettings.backgroundSlot)) { event ->
             val background = NecroNomicon.instance?.backgroundHandler?.getBackground(event.cursor)
 
             if (background == null) {
                 event.isCancelled = true
-                viewingPlayer.sendMessage("This item is not a background!")
                 return@CustomButton
             }
+            if (event.cursor.amount > 1) {
+                event.isCancelled = true
+                event.inventory.setItem(ownInventorySettings.backgroundSlot,background.itemStack)
 
-            viewingPlayer.sendMessage("You have added a background")
-            addFilledBackground(background, false)
+                viewingPlayer.setItemOnCursor(event.cursor.clone().apply { amount -= 1 })
+            }
+            playerProfile.background = background.id
+            NecroNomicon.instance?.profileManager?.saveProfile(playerProfile)
+            NecroNomicon.instance?.profileManager?.openProfile(viewingPlayer,playerProfile)
         },setItem)
     }
 
