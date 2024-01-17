@@ -1,0 +1,106 @@
+buildscript {
+    ext {
+        kotlinVersion = '1.0.5-2'
+    }
+    repositories { mavenCentral() }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+    }
+}
+
+
+import org.apache.commons.io.Charsets
+
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id("io.papermc.paperweight.userdev") version "1.5.5"
+    id("xyz.jpenilla.run-paper") version "2.1.0"
+}
+
+group = project.maven_group
+version = "$plugin_version+build.$build_number"
+
+base {
+    archivesName = project.archives_base_name
+}
+
+repositories {
+    maven {
+        name 'papermc'
+        url 'https://repo.papermc.io/repository/maven-public/'
+        content {
+            includeModule("io.papermc.paper", "paper-api")
+            includeModule("io.papermc", "paperlib")
+            includeModule("net.md-5", "bungeecord-chat")
+        }
+    }
+
+    mavenCentral()
+    maven { url = "https://repo.unnamed.team/repository/unnamed-public/" }
+    maven { url = "https://repo.codemc.io/repository/maven-releases/" }
+    maven { url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" } // Spigot
+    maven { url = "https://repo.inventivetalent.org/repository/public/" }
+    maven { url "https://maven.wolfyscript.com/repository/public/" }
+    maven { url "https://repo.codemc.io/repository/maven-snapshots" }
+}
+
+dependencies {
+    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+    implementation 'io.papermc:paperlib:1.0.8'
+
+//    implementation files("libs/CoinsEngine.jar")
+
+    implementation("net.wesjd:anvilgui:1.9.2-SNAPSHOT")
+
+    compileOnly("me.clip:placeholderapi:2.11.5")
+
+    paperweight.paperDevBundle("1.20.2-R0.1-SNAPSHOT")
+}
+
+kotlin {
+    jvmToolchain(17)
+}
+
+tasks {
+    build {
+        dependsOn(shadowJar)
+    }
+
+    assemble {
+        dependsOn(reobfJar)
+    }
+
+    compileJava {
+        options.encoding = Charsets.UTF_8.name()
+        options.release.set(17)
+    }
+
+    javadoc {
+        options.encoding = Charsets.UTF_8.name()
+    }
+
+    processResources {
+        filteringCharset = Charsets.UTF_8.name()
+    }
+
+    runServer {
+        minecraftVersion("1.20.1")
+    }
+}
+
+processResources {
+    filesMatching("**/plugin.yml") {
+        expand ( NAME: rootProject.name, VERSION: version, PACKAGE: project.group.toString() )
+    }
+}
+
+shadowJar {
+    archiveClassifier.set('')
+    relocate 'io.papermc.lib', 'shadow.io.papermc.paperlib'
+//    relocate 'sun.nightexpress.coinsengine', 'shadow.sun.nightexpress.coinsengine'
+}
+
+// Disable jar and replace with shadowJar
+jar.enabled = false
+assemble.dependsOn(shadowJar)

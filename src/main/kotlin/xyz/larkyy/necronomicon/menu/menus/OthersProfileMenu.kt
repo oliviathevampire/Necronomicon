@@ -1,12 +1,10 @@
 package xyz.larkyy.necronomicon.menu.menus
 
 import org.bukkit.entity.Player
-import su.nightexpress.coinsengine.api.CoinsEngineAPI
 import xyz.larkyy.necronomicon.NecroNomicon
 import xyz.larkyy.necronomicon.background.Background
 import xyz.larkyy.necronomicon.badge.Badge
 import xyz.larkyy.necronomicon.menu.CustomMenu
-import xyz.larkyy.necronomicon.menu.MenuItem
 import xyz.larkyy.necronomicon.menu.OthersInventorySettings
 import xyz.larkyy.necronomicon.menu.items.CustomButton
 import xyz.larkyy.necronomicon.profile.PlayerProfile
@@ -15,7 +13,7 @@ import xyz.larkyy.necronomicon.theme.Theme
 class OthersProfileMenu(private val othersInventorySettings: OthersInventorySettings, viewingPlayer: Player, playerProfile: PlayerProfile) :
     CustomMenu(viewingPlayer, playerProfile, othersInventorySettings.size, (playerProfile.background ?: "")+ (playerProfile.theme ?: othersInventorySettings.title)) {
 
-    private val repCurrency = CoinsEngineAPI.getCurrency("reputation")!!
+//    private val repCurrency = CoinsEngineAPI.getCurrency("reputation")!!
 
     init {
         addMenuItems(othersInventorySettings.customButtons)
@@ -29,12 +27,12 @@ class OthersProfileMenu(private val othersInventorySettings: OthersInventorySett
         val iS = othersInventorySettings.reputationButton.itemStack.clone()
         val menuItem = CustomButton(iS,othersInventorySettings.reputationButton.slots) {event ->
             event.isCancelled = true
-            val reputationBalance = CoinsEngineAPI.getBalance(viewingPlayer,repCurrency)
-            if (reputationBalance < 1) {
-                return@CustomButton
-            }
-
-            CoinsEngineAPI.removeBalance(viewingPlayer,repCurrency,1.0)
+//            val reputationBalance = CoinsEngineAPI.getBalance(viewingPlayer,repCurrency)
+//            if (reputationBalance < 1) {
+//                return@CustomButton
+//            }
+//
+//            CoinsEngineAPI.removeBalance(viewingPlayer,repCurrency,1.0)
             playerProfile.reputation++
 
             NecroNomicon.instance!!.profileManager.saveProfile(playerProfile).thenRun {

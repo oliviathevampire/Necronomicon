@@ -5,7 +5,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
-import su.nightexpress.coinsengine.api.CoinsEngineAPI
 import xyz.larkyy.necronomicon.profile.PlayerProfile
 
 abstract class MenuItem(
@@ -13,7 +12,7 @@ abstract class MenuItem(
     val slots: MutableList<Int>
 ) {
 
-    private val currency = CoinsEngineAPI.getCurrency("reputation")!!
+//    private val currency = CoinsEngineAPI.getCurrency("reputation")!!
     abstract fun onClick(event: InventoryClickEvent)
 
     fun getFormattedItem(playerProfile: PlayerProfile, viewingPlayer: Player): ItemStack {
@@ -29,9 +28,7 @@ abstract class MenuItem(
         val lore = im.lore()
         if (lore != null) {
             val newLore = ArrayList<Component>()
-            lore.forEach { line ->
-                newLore.add(replacePlaceholders(line,viewingPlayer, playerProfile))
-            }
+            lore.forEach { line -> newLore.add(replacePlaceholders(line,viewingPlayer, playerProfile)) }
             im.lore(newLore)
         }
 
@@ -44,9 +41,9 @@ abstract class MenuItem(
             it.match("%player%").replacement(playerProfile.userName)
         }.replaceText {
             it.match("%reputation%").replacement(playerProfile.reputation.toString())
-        }.replaceText {
+        }/*.replaceText {
             it.match("%available-reputation%").replacement((CoinsEngineAPI.getBalance(viewingPlayer,currency).toInt()).toString())
-        }.replaceText {
+        }*/.replaceText {
             it.match("%theme%").replacement(playerProfile.theme?:"")
         }.replaceText {
             it.match("%background%").replacement(playerProfile.background?:"")
