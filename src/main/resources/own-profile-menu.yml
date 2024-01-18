@@ -1,6 +1,6 @@
 own-profile:
   title: "Your Profile"
-  size: 56
+  size: 54
   status-button:
     material: NAME_TAG
     display-name: "<gold>Status <glyph:status>"

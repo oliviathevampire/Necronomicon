@@ -1,6 +1,8 @@
 package xyz.larkyy.necronomicon.menu.items
 
 import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
 import net.wesjd.anvilgui.AnvilGUI
 import net.wesjd.anvilgui.AnvilGUI.ResponseAction
 import org.bukkit.Material
@@ -22,7 +24,8 @@ class StatusButton(itemStack: ItemStack, slots: MutableList<Int>) : MenuItem(ite
             .title("Your status:")
             .itemLeft(ItemStack(Material.PAPER).apply {
                 val im = this.itemMeta!!
-                im.displayName(MiniMessage.miniMessage().deserialize("<white>"))
+                val miniMessage = MiniMessage.builder().tags(TagResolver.builder().resolver(StandardTags.defaults()).build()).build()
+                im.displayName(miniMessage.deserialize("<white>"))
                 this.itemMeta = im
             })
             .onClick {int, state ->

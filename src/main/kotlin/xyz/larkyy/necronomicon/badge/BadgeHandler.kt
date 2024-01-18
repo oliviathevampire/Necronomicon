@@ -7,13 +7,12 @@ import xyz.larkyy.necronomicon.NecroNomicon
 
 class BadgeHandler(plugin: NecroNomicon) {
 
-    private val namespacedKey: NamespacedKey
+    private val namespacedKey: NamespacedKey = NamespacedKey(plugin, "badge-id")
     val badges: MutableMap<String, Badge> = HashMap()
 
     init {
-        this.namespacedKey = NamespacedKey(plugin, "badge-id")
         for (badge in plugin.configLoader.loadBadges()) {
-            createBadge(badge.key,badge.value.item)
+            createBadge(badge.key, badge.value.item)
         }
     }
 

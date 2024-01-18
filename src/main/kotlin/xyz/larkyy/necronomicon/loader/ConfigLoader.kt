@@ -2,6 +2,8 @@ package xyz.larkyy.necronomicon.loader
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.configuration.file.FileConfiguration
@@ -121,14 +123,15 @@ class ConfigLoader(plugin: NecroNomicon) {
 
     private fun loadItemStack(cfg: FileConfiguration, path: String): ItemStack {
         val material = Material.valueOf(cfg.getString("$path.material", "STONE")!!.uppercase())
-        val displayname = cfg.getString("$path.display-name")!!
+        val displayName = cfg.getString("$path.display-name")!!
+        val miniMessage = MiniMessage.builder().tags(TagResolver.builder().resolver(StandardTags.defaults()).build()).build()
 
         val itemStack = ItemStack(material)
         val im = itemStack.itemMeta ?: return itemStack
-        im.displayName(MiniMessage.miniMessage().deserialize(displayname))
+        im.displayName(miniMessage.deserialize(displayName))
 
         if (cfg.contains("$path.lore")) {
-            val lore = loadComponentList(cfg, "$path.lore")
+            val lore = loadComponentList(miniMessage, cfg, "$path.lore")
             im.lore(lore)
         }
         if (cfg.contains("$path.model-data")) {
@@ -140,10 +143,10 @@ class ConfigLoader(plugin: NecroNomicon) {
         return itemStack
     }
 
-    private fun loadComponentList(cfg: FileConfiguration, path: String): ArrayList<Component> {
+    private fun loadComponentList(miniMessage: MiniMessage, cfg: FileConfiguration, path: String): ArrayList<Component> {
         val list = ArrayList<Component>()
         for (s in cfg.getStringList(path)) {
-            list.add(MiniMessage.miniMessage().deserialize(s))
+            list.add(miniMessage.deserialize(s))
         }
         return list
     }

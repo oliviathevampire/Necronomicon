@@ -1,10 +1,11 @@
 themes:
   "1":
-    value: "YOUR TEXTURE CHARACTERS"
-    length: 10 # Length of the texture (width in pixels)
+    value: "<white><font:profile_shells_halloween>"
+    length: -256 # Length of the texture (width in pixels)
     item:
-      material: DIAMOND
-      display-name: "<blue>Theme 1"
+      material: DIRT
+      model-data: 2
+      display-name: "Trick or Treehouse Orange Profile Shell"
   "2":
     value: "YOUR TEXTURE CHARACTERS"
     length: 10 # Length of the texture (width in pixels)

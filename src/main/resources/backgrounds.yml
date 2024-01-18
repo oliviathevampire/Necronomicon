@@ -1,13 +1,14 @@
 backgrounds:
   "1":
-    value: "YOUR TEXTURE CHARACTERS"
-    length: 10 # Length of the texture (width in pixels)
+    value: "<white><font:profile_pictures>"
+    length: 88 # Length of the texture (width in pixels)
     item:
-      material: DIAMOND
-      display-name: "<blue>Background 1"
+      material: DIRT
+      model-data: 1
+      display-name: "Trick or Treehouse Orange Profile Picture"
   "2":
-    value: "YOUR TEXTURE CHARACTERS"
+    value: "<white><font:profile_pictures>"
     length: 10 # Length of the texture (width in pixels)
     item:
       material: DIAMOND
-      display-name: "<blue>Background 2"
+      display-name: "Trick or Treehouse Orange Profile Picture"

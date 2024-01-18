@@ -1,6 +1,6 @@
 others-profile:
   title: "Profile of %player%"
-  size: 56
+  size: 54
   reputation-button:
     material: EMERALD
     display-name: "<green>Reputation: %reputation%"

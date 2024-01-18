@@ -2,7 +2,6 @@ package xyz.larkyy.necronomicon.menu.menus
 
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
 import xyz.larkyy.necronomicon.NecroNomicon
@@ -43,7 +42,6 @@ class OwnProfileMenu(private val ownInventorySettings: OwnInventorySettings, vie
     }
 
     private fun loadBadges() {
-
         for(i in 0..<ownInventorySettings.badgeSlots.size) {
             val slot = ownInventorySettings.badgeSlots[i]
             if (i >= playerProfile.badges.size) {
@@ -121,7 +119,7 @@ class OwnProfileMenu(private val ownInventorySettings: OwnInventorySettings, vie
             playerProfile.theme = null
             NecroNomicon.instance?.profileManager?.saveProfile(playerProfile)
             NecroNomicon.instance?.profileManager?.openProfile(viewingPlayer,playerProfile)
-            //addEmptyTheme(false)
+            addEmptyTheme(false)
         }
         addMenuItem(menuItem,setItem)
     }
@@ -140,7 +138,7 @@ class OwnProfileMenu(private val ownInventorySettings: OwnInventorySettings, vie
 
                 viewingPlayer.setItemOnCursor(event.cursor.clone().apply { amount -= 1 })
             }
-            playerProfile.theme = theme.id
+            playerProfile.theme = theme.value
             NecroNomicon.instance?.profileManager?.saveProfile(playerProfile)
             NecroNomicon.instance?.profileManager?.openProfile(viewingPlayer,playerProfile)
         },setItem)
@@ -188,7 +186,7 @@ class OwnProfileMenu(private val ownInventorySettings: OwnInventorySettings, vie
 
                 viewingPlayer.setItemOnCursor(event.cursor.clone().apply { amount -= 1 })
             }
-            playerProfile.background = background.id
+            playerProfile.background = background.value
             NecroNomicon.instance?.profileManager?.saveProfile(playerProfile)
             NecroNomicon.instance?.profileManager?.openProfile(viewingPlayer,playerProfile)
         },setItem)

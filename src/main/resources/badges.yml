@@ -1,10 +1,21 @@
 badges:
   "genderfluid":
-    material: DIAMOND
-    display-name: "Genderfluid Badge"
-  "trans":
-    material: DIAMOND
-    display-name: "Trans Badge"
+    display-name: "<white>Genderfluid Badge"
+    material: SCUTE
+    model-data: 1
   "bat":
-    material: DIAMOND
-    display-name: "Bat Badge"
+    display-name: "<white>Bat Badge"
+    material: SCUTE
+    model-data: 2
+  "eyeball":
+    display-name: "<white>Eyeball Badge"
+    material: SCUTE
+    model-data: 3
+  "ghost":
+    display-name: "<white>Ghost Badge"
+    material: SCUTE
+    model-data: 4
+  "trans":
+    display-name: "<white>Transgender Badge"
+    material: SCUTE
+    model-data: 5
